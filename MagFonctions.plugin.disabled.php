@@ -67,12 +67,14 @@ class FunctionsMag
 {
     private $id;
     public $debug=0;
-    	/* Retourner la premiere image superieure à une certaine taille d'un billet 
+    /* Retourner la premiere image superieure à une certaine taille d'un billet 
+     * On return rien si pas d'image
+     * On return une image
 	 * Dans la version 2 il faudra ajouter un systeme de cache et aussi savoir parser aussi les .png sans les tlchs 
 	 * Dans la version 1 on s'occupe uniquement des jpg 
 	 * 
 	 * @param string $text String dans laquelle chercher les images.
-	 * @param integer $taille Taille minimale de l'image (pour exclure comme cela tout ce qui picto FB tweet...
+	 * @param integer $taillse Taille minimale de l'image (pour exclure comme cela tout ce qui picto FB tweet...
 	 * */
 	public static function extractIMG($text, $taille = 200){
 		$valretour = "";
@@ -95,7 +97,13 @@ class FunctionsMag
 						//echo "<br />type= " . $type = $blah['mime'];
 						//echo "<br />X= " . $blah[0]."x".$blah[1];
 						//$node->setAttribute('src', 'http://static.images.monsite.com/images/' . $filename);
-						$valretour = "<img src=\"".$img_loc."\"  class=\"align-left\" />";
+						// Si la taille est superieure à 450 alors on affiche que l'image a la taille maxi de la colonne
+						if ($blah[0] > 400){
+							$lestyleimg = ' style="float:left;max-width:100%;max-height: auto;padding-right:1em;" ';
+						} else {
+							$lestyleimg = ' style="float:left;max-width:100%;max-height: 100px;padding-right:1em;" ';
+						}
+						$valretour = "<img src=\"".$img_loc."\"".$lestyleimg."/>";
 						break;
 					}
 				}
