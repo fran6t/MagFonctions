@@ -124,6 +124,18 @@ class FunctionsMag
 		}
 		return $valretour;
 	}
+	
+	/* Return l'url du favivon d'un feed
+	 *  Desactivé pour l'instant car finalement, wordpress et plein d'autres sites ne 
+	 * repecte pas l'emplacement du favicon à la racine du site faudra faire une serie
+	 * de test et duc coup attendre que l'on puisse mettre cela en cache
+	* */
+	public static function favicon($vartxt){
+		$vartxt = str_replace("http://","",$vartxt);
+		$newUrl = explode("/",$vartxt);
+		$urlFav = "http://".$newUrl[0]."/favicon.ico";
+		return "<img src=\"$urlFav\" />"; 
+	}
 
 } 
 
@@ -689,7 +701,6 @@ final class DOMLettersIterator implements Iterator
         $this->next();
     }
 }
-
 
 
 
