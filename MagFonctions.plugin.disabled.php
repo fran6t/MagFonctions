@@ -136,7 +136,143 @@ class FunctionsMag
 		$urlFav = "http://".$newUrl[0]."/favicon.ico";
 		return "<img src=\"$urlFav\" />"; 
 	}
-
+	
+	/* Permettre la navigation horizontale entre flux
+	 * Reçoit en parametre l'ID du flux et doit trouver dans la base le precedent et le suivant du dossier
+	 * correspondant
+	 *  */
+	public static function navFlux($lefeed,$lefolder,$letitre){
+		$lienprec = "";
+		$liensuiv = "";
+		// On construit la requete
+		$query = "SELECT id FROM `".MYSQL_PREFIX."feed` WHERE ".MYSQL_PREFIX."feed.folder =".$lefolder.";" ;
+		$result = mysql_query($query);
+		$i = 0;
+		$indice = 0;
+		while ($row = mysql_fetch_assoc($result)) {
+			$tabl[$i] = $row['id'];
+			// Si nous tenons le feed
+			if ($lefeed==$row['id']){
+					$indice = $i;
+			}
+			$i++;
+		}
+		// S'il y a au moins un élément
+		if (count($tabl) > 1 ) {
+			// Si seulement 2 elements
+			if (count($tabl) == 1 ){
+				// on tourne a l'infinie en fonction de l'endroit ou nous sommes
+				// si $indice premier element du tableau alors precedent = dernier element
+				if ($indice == 0 ) {
+					$lienprec = $tabl[count($tabl)-1];
+				}	
+				// si $indice dernier element du tableau alors suivant = premier element
+				if ($indice == 1 ) {
+					$liensuiv = $tabl[0];
+				}
+			} else {
+				// on tourne a l'infinie en fonction de l'endroit ou nous sommes
+				// si $indice premier element du tableau alors precedent = dernier element
+				if ($indice == 0 ) {
+					$lienprec = $tabl[count($tabl)-1];
+				} else {
+					$lienprec = $tabl[$indice-1];
+				}	
+				// si $indice dernier element du tableau alors suivant = premier element
+				if ($indice == count($tabl)-1 ) {
+					$liensuiv = $tabl[0];
+				} else {
+					$liensuiv = $tabl[$indice+1];
+				}
+			}
+			$chaineretour ="
+			<div class=\"row\">
+				<a href=\"index.php?action=selectedFeed&feed=".$lienprec."&view=flux\">
+				<div class=\"column3 ombre\">
+					Precedent
+				</div>
+				</a>
+				<div class=\"column6 ombre\">
+					".$letitre."
+				</div>
+				<a href=\"index.php?action=selectedFeed&feed=".$liensuiv."&view=flux\">
+				<div class=\"column3 ombre\">
+					Suivant
+				</div>
+				</a>
+			</div>";
+			return $chaineretour;
+		}
+		return; 
+	}
+	/* Permettre la navigation horizontale dans un flux
+	 * Reçoit en parametre l'ID du flux et doit trouver dans la base le precedent et le suivant du dossier
+	 * correspondant
+	 *  */
+	public static function navArticle($lefeed,$lebillet,$letitre){
+		$lienprec = "";
+		$liensuiv = "";
+		// On construit la requete
+		$query = "SELECT id FROM `".MYSQL_PREFIX."event` WHERE ".MYSQL_PREFIX."event.feed =".$lefeed.";" ;
+		$result = mysql_query($query);
+		$i = 0;
+		$indice = 0;
+		while ($row = mysql_fetch_assoc($result)) {
+			$tabl[$i] = $row['id'];
+			// Si nous tenons le feed
+			if ($lebillet==$row['id']){
+					$indice = $i;
+			}
+			$i++;
+		}
+		// S'il y a au moins un élément
+		if (count($tabl) > 1 ) {
+			// Si seulement 2 elements
+			if (count($tabl) == 1 ){
+				// on tourne a l'infinie en fonction de l'endroit ou nous sommes
+				// si $indice premier element du tableau alors precedent = dernier element
+				if ($indice == 0 ) {
+					$lienprec = $tabl[count($tabl)-1];
+				}	
+				// si $indice dernier element du tableau alors suivant = premier element
+				if ($indice == 1 ) {
+					$liensuiv = $tabl[0];
+				}
+			} else {
+				// on tourne a l'infinie en fonction de l'endroit ou nous sommes
+				// si $indice premier element du tableau alors precedent = dernier element
+				if ($indice == 0 ) {
+					$lienprec = $tabl[count($tabl)-1];
+				} else {
+					$lienprec = $tabl[$indice-1];
+				}	
+				// si $indice dernier element du tableau alors suivant = premier element
+				if ($indice == count($tabl)-1 ) {
+					$liensuiv = $tabl[0];
+				} else {
+					$liensuiv = $tabl[$indice+1];
+				}
+			}
+			$chaineretour ="
+			<div class=\"row\">
+				<a onclick=\"readThis(this,".$lienprec.",'title');\" href=\"index.php?action=selectedFeed&feed=".$lefeed."&billet=".$lienprec."&view=article\">
+				<div class=\"column3 ombre\">
+					Precedent
+				</div>
+				</a>
+				<div class=\"column6 ombre\">
+					".$letitre."
+				</div>
+				<a onclick=\"readThis(this,".$liensuiv.",'title');\" href=\"index.php?action=selectedFeed&feed=".$lefeed."&billet=".$liensuiv."&view=article\">
+				<div class=\"column3 ombre\">
+					Suivant
+				</div>
+				</a>
+			</div>";
+			return $chaineretour;
+		}
+		return; 
+	}
 } 
 
 
@@ -208,6 +344,8 @@ function stripTAG($text){
 	return innerHTML($body);
 	//return htmlspecialchars(innerHTML($body));
 	//return $doc->saveHTML();
+	
+	
 }
 
 
